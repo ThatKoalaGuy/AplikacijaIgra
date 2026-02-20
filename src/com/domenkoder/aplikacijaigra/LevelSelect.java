@@ -79,7 +79,10 @@ public class LevelSelect extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO call level select
+        Level1 level1 = new Level1(); // ustvari objekt
+        level1.setVisible(true);      // pokaži okno
+        level1.requestFocusInWindow(); // zdaj deluje
+        this.dispose();               // zapri LevelSelect
 
     }//GEN-LAST:event_jButton1ActionPerformed
 

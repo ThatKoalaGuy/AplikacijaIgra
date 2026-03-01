@@ -4,6 +4,8 @@
  */
 package com.domenkoder.aplikacijaigra;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public class Level1 extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Level1.class.getName());
 
     ArrayList<Rock> rocks = new ArrayList<>();
+    ArrayList<Bullet> bullets = new ArrayList<>();
 
     int lives = 3;
     boolean gameOver = false;
@@ -44,6 +47,20 @@ public class Level1 extends javax.swing.JFrame {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+
+                    int bulletX = playerX + spaceshipLabel.getWidth() / 2 - 10;
+                    int bulletY = playerY;
+
+                    Bullet b = new Bullet(bulletX, bulletY);
+                    bullets.add(b);
+
+                    getContentPane().add(
+                            b,
+                            new org.netbeans.lib.awtextra.AbsoluteConstraints(bulletX, bulletY, 20, 40)
+                    );
+                    getContentPane().setComponentZOrder(b, 0);
+                }
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     playerX -= 10;
                 }
@@ -78,10 +95,36 @@ public class Level1 extends javax.swing.JFrame {
         });
         spawnTimer.start();
 
+        ArrayList<Rock> toRemove = new ArrayList<>();
         //Rocks movement
-        moveTimer = new Timer(16, e -> {
+        moveTimer = new Timer(16, (ActionEvent e) -> {
+            ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
 
-            ArrayList<Rock> toRemove = new ArrayList<>();
+            for (Bullet b : bullets) {
+                b.move();
+
+                // če gre izven zgornjega roba
+                if (b.getY() < -50) {
+                    getContentPane().remove(b);
+                    bulletsToRemove.add(b);
+                }
+
+                // collision z rocki
+                for (Rock r : rocks) {
+                    if (b.getBounds().intersects(r.getBounds())) {
+
+                        getContentPane().remove(b);
+                        getContentPane().remove(r);
+
+                        bulletsToRemove.add(b);
+                        toRemove.add(r); // rock removal
+
+                        break; // bullet zadane samo en kamen
+                    }
+                }
+            }
+
+            bullets.removeAll(bulletsToRemove);
 
             for (Rock r : rocks) {
                 r.move();

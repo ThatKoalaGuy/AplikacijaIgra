@@ -31,11 +31,18 @@ public class Level1 extends javax.swing.JFrame {
     int playerX = 500;
     int playerY = 500;
 
+    private void updateHearts() {
+        jLabelHeart1.setVisible(lives >= 1);
+        jLabelHeart2.setVisible(lives >= 2);
+        jLabelHeart3.setVisible(lives >= 3);
+    }
+
     /**
      * Creates new form Level1
      */
     public Level1() {
         initComponents();
+        updateHearts();
         getContentPane().setComponentZOrder(bgLabel, getContentPane().getComponentCount() - 1);
         getContentPane().revalidate();
         getContentPane().repaint();
@@ -146,6 +153,7 @@ public class Level1 extends javax.swing.JFrame {
                 // collision with spaceshipom
                 if (!gameOver && r.getBounds().intersects(spaceshipLabel.getBounds())) {
                     lives--;
+                    updateHearts();
                     System.out.println("BOOM 💥  Lives left: " + lives);
 
                     // delete rock
@@ -190,6 +198,10 @@ public class Level1 extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabelHeart1 = new javax.swing.JLabel();
+        jLabelHeart2 = new javax.swing.JLabel();
+        jLabelHeart3 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         spaceshipLabel = new com.domenkoder.aplikacijaigra.FadingLabel();
         bgLabel = new javax.swing.JLabel();
 
@@ -197,9 +209,24 @@ public class Level1 extends javax.swing.JFrame {
         setTitle("Space Ranger | Level 1");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabelHeart1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/heart.png"))); // NOI18N
+        getContentPane().add(jLabelHeart1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, -1, -1));
+
+        jLabelHeart2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/heart.png"))); // NOI18N
+        getContentPane().add(jLabelHeart2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 80, -1, -1));
+
+        jLabelHeart3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/heart.png"))); // NOI18N
+        getContentPane().add(jLabelHeart3, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 80, -1, -1));
+
+        jLabel1.setFont(new java.awt.Font("C&C Red Alert [INET]", 3, 48)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Lives:");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, -1, -1));
+
         spaceshipLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/ezgif-31ef2d2cde44eff7.gif"))); // NOI18N
         getContentPane().add(spaceshipLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 500, -1, -1));
 
+        bgLabel.setForeground(new java.awt.Color(0, 0, 0));
         bgLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/levelBg.jpg"))); // NOI18N
         getContentPane().add(bgLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
@@ -234,6 +261,10 @@ public class Level1 extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bgLabel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabelHeart1;
+    private javax.swing.JLabel jLabelHeart2;
+    private javax.swing.JLabel jLabelHeart3;
     private javax.swing.JLabel spaceshipLabel;
     // End of variables declaration//GEN-END:variables
 }

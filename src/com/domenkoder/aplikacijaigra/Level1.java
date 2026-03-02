@@ -4,189 +4,29 @@
  */
 package com.domenkoder.aplikacijaigra;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import javax.swing.Timer;
-
 /**
  *
  * @author domen
  */
 public class Level1 extends javax.swing.JFrame {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Level1.class.getName());
+    private final GameManager gameManager;
 
-    ArrayList<Rock> rocks = new ArrayList<>();
-    ArrayList<Bullet> bullets = new ArrayList<>();
-
-    int lives = 3;
-    boolean gameOver = false;
-
-    Timer spawnTimer;
-    Timer moveTimer;
-
-    int playerX = 500;
-    int playerY = 500;
-
-    private void updateHearts() {
-        jLabelHeart1.setVisible(lives >= 1);
-        jLabelHeart2.setVisible(lives >= 2);
-        jLabelHeart3.setVisible(lives >= 3);
-    }
-
-    /**
-     * Creates new form Level1
-     */
     public Level1() {
         initComponents();
-        updateHearts();
+
+        gameManager = new GameManager(
+                this, (FadingLabel) spaceshipLabel,
+                bgLabel,
+                jLabelHeart1,
+                jLabelHeart2,
+                jLabelHeart3,
+                4000 // spawn interval za Level 1
+        );
+
         getContentPane().setComponentZOrder(bgLabel, getContentPane().getComponentCount() - 1);
         getContentPane().revalidate();
         getContentPane().repaint();
-
-        setFocusable(true);
-        requestFocusInWindow();
-
-        //Ship movement
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-
-                    int bulletX = playerX + spaceshipLabel.getWidth() / 2 - 10;
-                    int bulletY = playerY;
-
-                    Bullet b = new Bullet(bulletX, bulletY);
-                    bullets.add(b);
-
-                    getContentPane().add(
-                            b,
-                            new org.netbeans.lib.awtextra.AbsoluteConstraints(bulletX, bulletY, 20, 40)
-                    );
-                    getContentPane().setComponentZOrder(b, 0);
-                }
-                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    playerX -= 10;
-                }
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    playerX += 10;
-                }
-                // Bounds
-                if (playerX < 0) {
-                    playerX = 0;
-                }
-
-                if (playerX > 1200 - 300) {
-                    playerX = 1200 - 300;
-                }
-                spaceshipLabel.setLocation(playerX, playerY); // premakni JLabel
-            }
-
-        });
-
-        //Rocks spawning
-        spawnTimer = new Timer(4000, e -> { // vsakih 5 sekund
-            int screenWidth = getContentPane().getWidth();
-            int randomX = (int) (Math.random() * (screenWidth - 80));
-
-            Rock r = new Rock(randomX);
-            rocks.add(r);
-
-            getContentPane().add(r,
-                    new org.netbeans.lib.awtextra.AbsoluteConstraints(randomX, -80, 80, 80));
-
-            getContentPane().setComponentZOrder(r, 0);
-        });
-        spawnTimer.start();
-
-        ArrayList<Rock> toRemove = new ArrayList<>();
-        //Rocks movement
-        moveTimer = new Timer(16, (ActionEvent e) -> {
-            ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
-
-            for (Bullet b : bullets) {
-                b.move();
-
-                // če gre izven zgornjega roba
-                if (b.getY() < -50) {
-                    getContentPane().remove(b);
-                    bulletsToRemove.add(b);
-                }
-
-                // collision z rocki
-                for (Rock r : rocks) {
-                    if (b.getBounds().intersects(r.getBounds())) {
-
-                        getContentPane().remove(b);
-                        getContentPane().remove(r);
-
-                        bulletsToRemove.add(b);
-                        toRemove.add(r); // rock removal
-
-                        break; // bullet zadane samo en kamen
-                    }
-                }
-            }
-
-            bullets.removeAll(bulletsToRemove);
-
-            for (Rock r : rocks) {
-                r.move();
-
-                // bottom border
-                if (r.getY() > getContentPane().getHeight()) {
-                    getContentPane().remove(r);
-                    toRemove.add(r);
-                }
-
-                if (playerX < 0) {
-                    playerX = 0;
-                }
-                if (playerX > 1200 - 300) {
-                    playerX = 1200 - 300;
-                }
-                spaceshipLabel.setLocation(playerX, playerY);
-
-                // collision with spaceshipom
-                if (!gameOver && r.getBounds().intersects(spaceshipLabel.getBounds())) {
-                    lives--;
-                    updateHearts();
-                    System.out.println("BOOM 💥  Lives left: " + lives);
-
-                    // delete rock
-                    getContentPane().remove(r);
-                    toRemove.add(r);
-
-                    // Flash effect
-                    Timer flashTimer = new Timer(100, null);
-                    final int[] count = {0};
-                    flashTimer.addActionListener(ev -> {
-                        float newAlpha = (count[0] % 2 == 0) ? 0f : 1f;
-                        ((FadingLabel) spaceshipLabel).setAlpha(newAlpha);
-                        count[0]++;
-                        if (count[0] >= 6) {
-                            ((FadingLabel) spaceshipLabel).setAlpha(1f);
-                            flashTimer.stop();
-                        }
-                    });
-                    flashTimer.start();
-
-                    if (lives <= 0) {
-                        gameOver = true;
-                        spawnTimer.stop();
-                        moveTimer.stop();
-                        System.out.println("GAME OVER 💀");
-                    }
-                }
-            }
-
-            rocks.removeAll(toRemove);
-            getContentPane().repaint();
-        });
-        moveTimer.start();
     }
 
     /**
@@ -223,7 +63,7 @@ public class Level1 extends javax.swing.JFrame {
         jLabel1.setText("Lives:");
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, -1, -1));
 
-        spaceshipLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/ezgif-31ef2d2cde44eff7.gif"))); // NOI18N
+        spaceshipLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/ezgif-31ef2d2cde44eff7.gif")));
         getContentPane().add(spaceshipLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 500, -1, -1));
 
         bgLabel.setForeground(new java.awt.Color(0, 0, 0));
@@ -251,7 +91,7 @@ public class Level1 extends javax.swing.JFrame {
                 }
             }
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            //logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 

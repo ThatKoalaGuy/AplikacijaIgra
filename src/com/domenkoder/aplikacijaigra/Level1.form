@@ -81,8 +81,8 @@
     </Component>
     <Component class="javax.swing.JLabel" name="spaceshipLabel">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/com/domenkoder/aplikacijaigra/images/ezgif-31ef2d2cde44eff7.gif"/>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="new javax.swing.ImageIcon(getClass().getResource(&quot;/com/domenkoder/aplikacijaigra/images/ezgif-31ef2d2cde44eff7.gif&quot;))" type="code"/>
         </Property>
       </Properties>
       <AuxValues>

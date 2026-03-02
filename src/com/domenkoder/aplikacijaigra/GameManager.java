@@ -1,6 +1,7 @@
 package com.domenkoder.aplikacijaigra;
 
 import java.awt.event.ActionEvent;
+import java.awt.Point;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -50,7 +51,7 @@ public class GameManager {
         setupSpawnTimer();
         setupMoveTimer();
 
-        // Force initial position to what you expect
+        // Force initial position
         spaceshipLabel.setLocation(playerX, playerY);
     }
 
@@ -87,15 +88,20 @@ public class GameManager {
         });
     }
 
-    private void clampAndApplyShipPosition() {
+    private void clampPlayerPosition() {
         if (playerX < 0) playerX = 0;
-        if (playerX > 1200 - 300) playerX = 1200 - 300;
-        spaceshipLabel.setLocation(playerX, playerY);
+        if (playerX > 900) playerX = 900;  // 1200-300
+    }
+
+    private void syncShipPosition() {
+        // ABSOLUTNO NEPREMIČNA POZICIJA - NIČ TE NE BO TELEPORTIRALO!
+        spaceshipLabel.setBounds(playerX, playerY, spaceshipLabel.getWidth(), spaceshipLabel.getHeight());
     }
 
     private void movePlayer(int deltaX) {
         playerX += deltaX;
-        clampAndApplyShipPosition();
+        clampPlayerPosition();
+        syncShipPosition();
     }
 
     private void shootBullet() {
@@ -124,11 +130,14 @@ public class GameManager {
     }
 
     private void setupMoveTimer() {
-        ArrayList<Rock> rocksToRemove = new ArrayList<>();
-
         moveTimer = new Timer(16, (ActionEvent e) -> {
+            // *** TOLE JE TVOJ WHILE(TRUE) - VSAK FRAME PRISILNO SINHRONIZIRA POZICIJO ***
+            syncShipPosition();
+            
             ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
+            ArrayList<Rock> rocksToRemove = new ArrayList<>();
 
+            // Bullets
             for (Bullet b : bullets) {
                 b.move();
 
@@ -150,6 +159,7 @@ public class GameManager {
             }
             bullets.removeAll(bulletsToRemove);
 
+            // Rocks + Collision
             for (Rock r : rocks) {
                 r.move();
 
@@ -159,15 +169,18 @@ public class GameManager {
                     continue;
                 }
 
-                // your old anti-teleport trick
-                clampAndApplyShipPosition();
-
+                // PRISILNA SINHRONIZACIJA PRED KOLIZIJO
+                syncShipPosition();
+                
                 if (!gameOver && r.getBounds().intersects(spaceshipLabel.getBounds())) {
                     lives--;
                     updateHearts();
 
                     frame.getContentPane().remove(r);
                     rocksToRemove.add(r);
+
+                    // ŠE ENA PRISILNA SINHRONIZACIJA PO KOLIZIJI
+                    syncShipPosition();
 
                     Timer flashTimer = new Timer(100, null);
                     final int[] count = {0};

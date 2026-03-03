@@ -41,14 +41,14 @@ public class GameManager {
     private int score = 0;
 
     public GameManager(JFrame frame,
-                       FadingLabel spaceshipLabel,
-                       JLabel bgLabel,
-                       JLabel heart1,
-                       JLabel heart2,
-                       JLabel heart3,
-                       JLabel levelLabel,
-                       JLabel scoreLabel,
-                       int spawnInterval) {
+            FadingLabel spaceshipLabel,
+            JLabel bgLabel,
+            JLabel heart1,
+            JLabel heart2,
+            JLabel heart3,
+            JLabel levelLabel,
+            JLabel scoreLabel,
+            int spawnInterval) {
 
         this.frame = frame;
         this.spaceshipLabel = spaceshipLabel;
@@ -92,23 +92,51 @@ public class GameManager {
 
         im.put(KeyStroke.getKeyStroke("pressed LEFT"), "leftPressed");
         im.put(KeyStroke.getKeyStroke("released LEFT"), "leftReleased");
-        am.put("leftPressed", new AbstractAction() { public void actionPerformed(ActionEvent e) { leftPressed = true; }});
-        am.put("leftReleased", new AbstractAction() { public void actionPerformed(ActionEvent e) { leftPressed = false; }});
+        am.put("leftPressed", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                leftPressed = true;
+            }
+        });
+        am.put("leftReleased", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                leftPressed = false;
+            }
+        });
 
         im.put(KeyStroke.getKeyStroke("pressed RIGHT"), "rightPressed");
         im.put(KeyStroke.getKeyStroke("released RIGHT"), "rightReleased");
-        am.put("rightPressed", new AbstractAction() { public void actionPerformed(ActionEvent e) { rightPressed = true; }});
-        am.put("rightReleased", new AbstractAction() { public void actionPerformed(ActionEvent e) { rightPressed = false; }});
+        am.put("rightPressed", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                rightPressed = true;
+            }
+        });
+        am.put("rightReleased", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                rightPressed = false;
+            }
+        });
 
         im.put(KeyStroke.getKeyStroke("pressed SPACE"), "spacePressed");
         im.put(KeyStroke.getKeyStroke("released SPACE"), "spaceReleased");
-        am.put("spacePressed", new AbstractAction() { public void actionPerformed(ActionEvent e) { spacePressed = true; }});
-        am.put("spaceReleased", new AbstractAction() { public void actionPerformed(ActionEvent e) { spacePressed = false; }});
+        am.put("spacePressed", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                spacePressed = true;
+            }
+        });
+        am.put("spaceReleased", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                spacePressed = false;
+            }
+        });
     }
 
     private void clampPlayerPosition() {
-        if (playerX < 0) playerX = 0;
-        if (playerX > 900) playerX = 900;
+        if (playerX < 0) {
+            playerX = 0;
+        }
+        if (playerX > 900) {
+            playerX = 900;
+        }
     }
 
     private void syncShipPosition() {
@@ -132,6 +160,19 @@ public class GameManager {
         frame.getContentPane().setComponentZOrder(b, 0);
     }
 
+    private void spawnExplosion(int x, int y) {
+        Explosion explosion = new Explosion(x, y);
+        frame.getContentPane().add(explosion);
+        frame.getContentPane().setComponentZOrder(explosion, 0);
+
+        Timer removeTimer = new Timer(600, e -> {
+            frame.getContentPane().remove(explosion);
+            frame.getContentPane().repaint();
+        });
+        removeTimer.setRepeats(false);
+        removeTimer.start();
+    }
+
     private void setupSpawnTimer() {
         spawnTimer = new Timer(spawnInterval, e -> {
             int screenWidth = frame.getContentPane().getWidth();
@@ -150,14 +191,20 @@ public class GameManager {
 
     private void setupMoveTimer() {
         moveTimer = new Timer(16, e -> {
-            if (leftPressed) movePlayer(-8);
-            if (rightPressed) movePlayer(8);
+            if (leftPressed) {
+                movePlayer(-8);
+            }
+            if (rightPressed) {
+                movePlayer(8);
+            }
 
             if (spacePressed && shootCooldown <= 0) {
                 shootBullet();
                 shootCooldown = shootCooldownMax;
             }
-            if (shootCooldown > 0) shootCooldown--;
+            if (shootCooldown > 0) {
+                shootCooldown--;
+            }
 
             ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
             ArrayList<Rock> rocksToRemove = new ArrayList<>();
@@ -171,6 +218,8 @@ public class GameManager {
                 }
                 for (Rock r : rocks) {
                     if (b.getBounds().intersects(r.getBounds())) {
+                                                spawnExplosion(r.getX(), r.getY());
+
                         frame.getContentPane().remove(b);
                         frame.getContentPane().remove(r);
                         bulletsToRemove.add(b);
@@ -194,6 +243,7 @@ public class GameManager {
                 }
 
                 if (!gameOver && r.getBounds().intersects(spaceshipLabel.getBounds())) {
+                    spawnExplosion(r.getX(), r.getY());
                     lives--;
                     updateHearts();
                     frame.getContentPane().remove(r);
@@ -216,7 +266,9 @@ public class GameManager {
                         gameOver = true;
                         spawnTimer.stop();
                         moveTimer.stop();
-                        if (levelTimer != null) levelTimer.stop();
+                        if (levelTimer != null) {
+                            levelTimer.stop();
+                        }
                         System.out.println("GAME OVER 💀");
                     }
                 }

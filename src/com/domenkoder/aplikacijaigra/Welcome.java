@@ -73,6 +73,11 @@ public class Welcome extends javax.swing.JFrame {
         getContentPane().add(welcomeBgLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1204, -1));
 
         jMenu1.setText("Help");
+        jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu1MouseClicked(evt);
+            }
+        });
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("About");
@@ -108,8 +113,13 @@ public class Welcome extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu2ActionPerformed
 
     private void jMenu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu2MouseClicked
-        JOptionPane.showMessageDialog(rootPane, "Space Ranger v1.0 \n © Domen Koder, 2026 \nLicencirano pod MIT licenco.");
+        JOptionPane.showMessageDialog(rootPane, "Space Ranger v1.0 \n © Domen Koder, 2026 \nLicensed under the MIT license.", "About", 1);
     }//GEN-LAST:event_jMenu2MouseClicked
+
+    private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(rootPane, "Use arrow keys to move left and right. Press space to shoot.\nPress the up arrow to activate the special ability.", "Instructions", 1);
+    }//GEN-LAST:event_jMenu1MouseClicked
 
     /**
      * @param args the command line arguments

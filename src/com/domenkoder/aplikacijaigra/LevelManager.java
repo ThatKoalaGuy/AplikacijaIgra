@@ -15,6 +15,10 @@ public class LevelManager {
     public static int getCurrentLevel() {
         return currentLevel;
     }
+    
+    public static void setLevel(int level) {
+        currentLevel = level;
+    }
 
     public static void reset() {
         currentLevel = 1;

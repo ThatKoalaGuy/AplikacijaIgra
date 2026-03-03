@@ -82,6 +82,7 @@ public class LevelSelect extends javax.swing.JFrame {
         Level1 level1 = new Level1(); // ustvari objekt
         level1.setVisible(true);      // pokaži okno
         level1.requestFocusInWindow(); // zdaj deluje
+        LevelManager.setLevel(1);
         this.dispose();               // zapri LevelSelect
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -90,6 +91,7 @@ public class LevelSelect extends javax.swing.JFrame {
         Level2 level2 = new Level2(); // ustvari objekt
         level2.setVisible(true);      // pokaži okno
         level2.requestFocusInWindow(); // zdaj deluje
+        LevelManager.setLevel(2);
         this.dispose();               // zapri LevelSelect
 
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -98,6 +100,7 @@ public class LevelSelect extends javax.swing.JFrame {
         Level3 level3 = new Level3(); // ustvari objekt
         level3.setVisible(true);      // pokaži okno
         level3.requestFocusInWindow(); // zdaj deluje
+        LevelManager.setLevel(3);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 

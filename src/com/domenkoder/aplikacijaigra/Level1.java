@@ -21,6 +21,8 @@ public class Level1 extends javax.swing.JFrame {
                 jLabelHeart1,
                 jLabelHeart2,
                 jLabelHeart3,
+                jLabel3,
+                jLabel4,
                 4000 // spawn interval za Level 1
         );
 
@@ -42,6 +44,8 @@ public class Level1 extends javax.swing.JFrame {
         jLabelHeart1 = new javax.swing.JLabel();
         jLabelHeart2 = new javax.swing.JLabel();
         jLabelHeart3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         bgLabel = new javax.swing.JLabel();
 
@@ -65,6 +69,15 @@ public class Level1 extends javax.swing.JFrame {
         jLabelHeart3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/heart.png"))); // NOI18N
         getContentPane().add(jLabelHeart3);
         jLabelHeart3.setBounds(190, 80, 75, 75);
+
+        jLabel4.setFont(new java.awt.Font("C&C Red Alert [INET]", 3, 48)); // NOI18N
+        getContentPane().add(jLabel4);
+        jLabel4.setBounds(1000, 110, 230, 50);
+
+        jLabel3.setFont(new java.awt.Font("C&C Red Alert [INET]", 3, 48)); // NOI18N
+        jLabel3.setText("0");
+        getContentPane().add(jLabel3);
+        jLabel3.setBounds(1000, 40, 230, 50);
 
         jLabel1.setFont(new java.awt.Font("C&C Red Alert [INET]", 3, 48)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -109,6 +122,8 @@ public class Level1 extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bgLabel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabelHeart1;
     private javax.swing.JLabel jLabelHeart2;
     private javax.swing.JLabel jLabelHeart3;

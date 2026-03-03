@@ -1,7 +1,6 @@
 package com.domenkoder.aplikacijaigra;
 
 import java.awt.event.ActionEvent;
-import java.awt.Point;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -13,6 +12,8 @@ public class GameManager {
     protected JLabel jLabelHeart1;
     protected JLabel jLabelHeart2;
     protected JLabel jLabelHeart3;
+    protected JLabel jLabel3; // timer
+    protected JLabel jLabel4; // score
 
     protected ArrayList<Rock> rocks = new ArrayList<>();
     protected ArrayList<Bullet> bullets = new ArrayList<>();
@@ -22,12 +23,22 @@ public class GameManager {
 
     protected Timer spawnTimer;
     protected Timer moveTimer;
+    protected Timer levelTimer;
 
-    // Use the designer position (Level1 has 490,500)
     protected int playerX = 490;
     protected int playerY = 500;
 
     private final int spawnInterval;
+
+    // tipke stanja
+    private boolean leftPressed = false;
+    private boolean rightPressed = false;
+    private boolean spacePressed = false;
+
+    private int shootCooldown = 0;
+    private final int shootCooldownMax = 24;
+
+    private int score = 0;
 
     public GameManager(JFrame frame,
                        FadingLabel spaceshipLabel,
@@ -35,6 +46,8 @@ public class GameManager {
                        JLabel heart1,
                        JLabel heart2,
                        JLabel heart3,
+                       JLabel levelLabel,
+                       JLabel scoreLabel,
                        int spawnInterval) {
 
         this.frame = frame;
@@ -43,15 +56,20 @@ public class GameManager {
         this.jLabelHeart1 = heart1;
         this.jLabelHeart2 = heart2;
         this.jLabelHeart3 = heart3;
+        this.jLabel3 = levelLabel;  // timer
+        this.jLabel4 = scoreLabel;  // score
         this.spawnInterval = spawnInterval;
+
+        score = 0;
+        jLabel4.setText("Score: " + score);
 
         setupUI();
         updateHearts();
         setupInputBindings();
         setupSpawnTimer();
         setupMoveTimer();
+        startLevelTimer();
 
-        // Force initial position
         spaceshipLabel.setLocation(playerX, playerY);
     }
 
@@ -72,29 +90,28 @@ public class GameManager {
         InputMap im = root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap am = root.getActionMap();
 
-        im.put(KeyStroke.getKeyStroke("LEFT"), "left");
-        am.put("left", new AbstractAction() {
-            @Override public void actionPerformed(ActionEvent e) { movePlayer(-10); }
-        });
+        im.put(KeyStroke.getKeyStroke("pressed LEFT"), "leftPressed");
+        im.put(KeyStroke.getKeyStroke("released LEFT"), "leftReleased");
+        am.put("leftPressed", new AbstractAction() { public void actionPerformed(ActionEvent e) { leftPressed = true; }});
+        am.put("leftReleased", new AbstractAction() { public void actionPerformed(ActionEvent e) { leftPressed = false; }});
 
-        im.put(KeyStroke.getKeyStroke("RIGHT"), "right");
-        am.put("right", new AbstractAction() {
-            @Override public void actionPerformed(ActionEvent e) { movePlayer(10); }
-        });
+        im.put(KeyStroke.getKeyStroke("pressed RIGHT"), "rightPressed");
+        im.put(KeyStroke.getKeyStroke("released RIGHT"), "rightReleased");
+        am.put("rightPressed", new AbstractAction() { public void actionPerformed(ActionEvent e) { rightPressed = true; }});
+        am.put("rightReleased", new AbstractAction() { public void actionPerformed(ActionEvent e) { rightPressed = false; }});
 
-        im.put(KeyStroke.getKeyStroke("SPACE"), "shoot");
-        am.put("shoot", new AbstractAction() {
-            @Override public void actionPerformed(ActionEvent e) { shootBullet(); }
-        });
+        im.put(KeyStroke.getKeyStroke("pressed SPACE"), "spacePressed");
+        im.put(KeyStroke.getKeyStroke("released SPACE"), "spaceReleased");
+        am.put("spacePressed", new AbstractAction() { public void actionPerformed(ActionEvent e) { spacePressed = true; }});
+        am.put("spaceReleased", new AbstractAction() { public void actionPerformed(ActionEvent e) { spacePressed = false; }});
     }
 
     private void clampPlayerPosition() {
         if (playerX < 0) playerX = 0;
-        if (playerX > 900) playerX = 900;  // 1200-300
+        if (playerX > 900) playerX = 900;
     }
 
     private void syncShipPosition() {
-        // ABSOLUTNO NEPREMIČNA POZICIJA - NIČ TE NE BO TELEPORTIRALO!
         spaceshipLabel.setBounds(playerX, playerY, spaceshipLabel.getWidth(), spaceshipLabel.getHeight());
     }
 
@@ -118,69 +135,69 @@ public class GameManager {
     private void setupSpawnTimer() {
         spawnTimer = new Timer(spawnInterval, e -> {
             int screenWidth = frame.getContentPane().getWidth();
-            int randomX = (int) (Math.random() * (screenWidth - 80));
+            int margin = 70;
+            int rockWidth = 80;
+            int randomX = margin + (int) (Math.random() * (screenWidth - 2 * margin - rockWidth));
 
             Rock r = new Rock(randomX);
             rocks.add(r);
 
-            frame.getContentPane().add(r, new org.netbeans.lib.awtextra.AbsoluteConstraints(randomX, -80, 80, 80));
+            frame.getContentPane().add(r, new org.netbeans.lib.awtextra.AbsoluteConstraints(randomX, -80, rockWidth, rockWidth));
             frame.getContentPane().setComponentZOrder(r, 0);
         });
         spawnTimer.start();
     }
 
     private void setupMoveTimer() {
-        moveTimer = new Timer(16, (ActionEvent e) -> {
-            // *** TOLE JE TVOJ WHILE(TRUE) - VSAK FRAME PRISILNO SINHRONIZIRA POZICIJO ***
-            syncShipPosition();
-            
+        moveTimer = new Timer(16, e -> {
+            if (leftPressed) movePlayer(-8);
+            if (rightPressed) movePlayer(8);
+
+            if (spacePressed && shootCooldown <= 0) {
+                shootBullet();
+                shootCooldown = shootCooldownMax;
+            }
+            if (shootCooldown > 0) shootCooldown--;
+
             ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
             ArrayList<Rock> rocksToRemove = new ArrayList<>();
 
-            // Bullets
             for (Bullet b : bullets) {
                 b.move();
-
                 if (b.getY() < -50) {
                     frame.getContentPane().remove(b);
                     bulletsToRemove.add(b);
                     continue;
                 }
-
                 for (Rock r : rocks) {
                     if (b.getBounds().intersects(r.getBounds())) {
                         frame.getContentPane().remove(b);
                         frame.getContentPane().remove(r);
                         bulletsToRemove.add(b);
                         rocksToRemove.add(r);
+
+                        // Povečaj score
+                        score++;
+                        jLabel4.setText("Score: " + score);
                         break;
                     }
                 }
             }
             bullets.removeAll(bulletsToRemove);
 
-            // Rocks + Collision
             for (Rock r : rocks) {
                 r.move();
-
                 if (r.getY() > frame.getContentPane().getHeight()) {
                     frame.getContentPane().remove(r);
                     rocksToRemove.add(r);
                     continue;
                 }
 
-                // PRISILNA SINHRONIZACIJA PRED KOLIZIJO
-                syncShipPosition();
-                
                 if (!gameOver && r.getBounds().intersects(spaceshipLabel.getBounds())) {
                     lives--;
                     updateHearts();
-
                     frame.getContentPane().remove(r);
                     rocksToRemove.add(r);
-
-                    // ŠE ENA PRISILNA SINHRONIZACIJA PO KOLIZIJI
-                    syncShipPosition();
 
                     Timer flashTimer = new Timer(100, null);
                     final int[] count = {0};
@@ -199,6 +216,7 @@ public class GameManager {
                         gameOver = true;
                         spawnTimer.stop();
                         moveTimer.stop();
+                        if (levelTimer != null) levelTimer.stop();
                         System.out.println("GAME OVER 💀");
                     }
                 }
@@ -207,7 +225,34 @@ public class GameManager {
             rocks.removeAll(rocksToRemove);
             frame.getContentPane().repaint();
         });
-
         moveTimer.start();
+    }
+
+    private void startLevelTimer() {
+        int levelSeconds = 30;
+        jLabel3.setText("Time: " + levelSeconds);
+
+        levelTimer = new Timer(1000, e -> {
+            if (gameOver) {
+                levelTimer.stop();
+                return;
+            }
+
+            int currentTime = Integer.parseInt(jLabel3.getText().replace("Time: ", ""));
+            currentTime--;
+
+            if (currentTime <= 0) {
+                spawnTimer.stop();
+                moveTimer.stop();
+                gameOver = true;
+                levelTimer.stop();
+                jLabel3.setText("Time: 0");
+                System.out.println("LEVEL COMPLETE 🎉");
+            } else {
+                jLabel3.setText("Time: " + currentTime);
+            }
+        });
+
+        levelTimer.start();
     }
 }

@@ -13,14 +13,17 @@ import javax.swing.JLabel;
  */
 public class Bullet extends JLabel {
 
+    //Sprejme koordinate
     public Bullet(int x, int y) {
         setIcon(new ImageIcon(
                 getClass().getResource("/com/domenkoder/aplikacijaigra/images/bullet.gif")
         ));
+        //Lokacija, velikost
         setBounds(x, y, 20, 40);
     }
 
     public void move() {
-        setLocation(getX(), getY() - 10); // gre gor
+        //Premik gor za 10px
+        setLocation(getX(), getY() - 10);
     }
 }

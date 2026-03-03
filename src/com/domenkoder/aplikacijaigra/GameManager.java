@@ -6,6 +6,7 @@ import javax.swing.*;
 
 public class GameManager {
 
+    //GUI komponente
     protected JFrame frame;
     protected FadingLabel spaceshipLabel;
     protected JLabel bgLabel;
@@ -25,9 +26,11 @@ public class GameManager {
     protected Timer moveTimer;
     protected Timer levelTimer;
 
+    //Koordinate igralca
     protected int playerX = 490;
     protected int playerY = 500;
 
+    //Koliko hitro se spawnajo meteorji
     private final int spawnInterval;
 
     private boolean leftPressed = false;
@@ -39,6 +42,7 @@ public class GameManager {
 
     private int score = 0;
 
+    //Neunicljivost
     private boolean isInvincible = false;
     private boolean rollCooldown = false;
 
@@ -65,23 +69,22 @@ public class GameManager {
         score = 0;
         jLabel4.setText("Score: " + score);
 
-        setupUI();
-        updateHearts();
-        setupSpawnTimer();
-        setupMoveTimer();
-        startLevelTimer();
+        setupUI();        // nastavi z-order ozadja
+        updateHearts();   // prikaže življenja
+        setupSpawnTimer();// nastavi timer za meteorit
+        setupMoveTimer(); // nastavi timer za premikanje
+        startLevelTimer();// nastavi timer za level
 
-        // KEYS NA KONCU - po vseh timerjih!
         setupInputBindings();
 
+        //Ladja na zacetno pozicijo
         spaceshipLabel.setLocation(playerX, playerY);
-        frame.requestFocus();  // Focus na koncu
+        frame.requestFocus();
     }
 
     private void setupUI() {
-        // SAMO z-order ozadja - brez focus problema!
         frame.getContentPane().setComponentZOrder(bgLabel,
-                frame.getContentPane().getComponentCount() - 1);
+            frame.getContentPane().getComponentCount() - 1);
     }
 
     private void updateHearts() {
@@ -134,7 +137,7 @@ public class GameManager {
             }
         });
 
-        // BARREL ROLL - UP arrow
+        // neunicljivost - puscica gor
         im.put(KeyStroke.getKeyStroke("pressed UP"), "upPressed");
         am.put("upPressed", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -143,14 +146,14 @@ public class GameManager {
                     rollCooldown = true;
                     spaceshipLabel.setAlpha(0.5f);
 
-                    Timer invTimer = new Timer(4000, ev -> {  // 3 seconds
+                    Timer invTimer = new Timer(4000, ev -> {
                         isInvincible = false;
                         spaceshipLabel.setAlpha(1.0f);
                     });
                     invTimer.setRepeats(false);
                     invTimer.start();
 
-                    Timer cdTimer = new Timer(8000, ev -> {  // 8 seconds
+                    Timer cdTimer = new Timer(8000, ev -> {
                         rollCooldown = false;
                     });
                     cdTimer.setRepeats(false);
@@ -160,6 +163,7 @@ public class GameManager {
         });
     }
 
+    //Blokada da ne zapustimo zaslona
     private void clampPlayerPosition() {
         if (playerX < 0) {
             playerX = 0;
@@ -169,39 +173,44 @@ public class GameManager {
         }
     }
 
+    //Dejansko vidno premikanje
     private void syncShipPosition() {
         spaceshipLabel.setBounds(playerX, playerY,
                 spaceshipLabel.getWidth(),
                 spaceshipLabel.getHeight());
     }
 
+    //Logicno premikanje
     private void movePlayer(int deltaX) {
         playerX += deltaX;
         clampPlayerPosition();
         syncShipPosition();
     }
 
+    
     private void shootBullet() {
+        //Start lokacija metka
         int bulletX = playerX + spaceshipLabel.getWidth() / 2 - 10;
         int bulletY = playerY;
 
+        //Nov izstrelek
         Bullet b = new Bullet(bulletX, bulletY);
-        bullets.add(b);
+        bullets.add(b); //Dodan v array bulletov
 
+        //Nalimamo v GUI
         frame.getContentPane().add(b,
                 new org.netbeans.lib.awtextra.AbsoluteConstraints(
                         bulletX, bulletY, 20, 40));
         frame.getContentPane().setComponentZOrder(b, 0);
     }
 
+    //Sprozimo lokacijo na koordinatah
     private void spawnExplosion(int x, int y) {
-        System.out.println("💥 EXPLOSION na (" + x + "," + y + ")");  // DEBUG
         Explosion explosion = new Explosion(x, y);
         frame.getContentPane().add(explosion);
         frame.getContentPane().setComponentZOrder(explosion, 0);
 
-        Timer removeTimer = new Timer(600, e -> {
-            System.out.println("🧹 EXPLOSION odstranjen");  // DEBUG
+        Timer removeTimer = new Timer(1000, e -> {
             frame.getContentPane().remove(explosion);
             frame.getContentPane().repaint();
         });
@@ -229,9 +238,10 @@ public class GameManager {
     }
 
     private void setupMoveTimer() {
+        //Tece vsakih 16ms, kar pride cca 60fps
         moveTimer = new Timer(16, (ActionEvent e) -> {
             if (gameOver) {
-                return;  // Early exit če je konec
+                return;  // exit če je ze konec
             }
             if (leftPressed) {
                 movePlayer(-8);
@@ -252,9 +262,9 @@ public class GameManager {
             ArrayList<Rock> rocksToRemove = new ArrayList<>();
 
             for (Bullet b : bullets) {
-                b.move();
+                b.move(); //premik gor proti
 
-                if (b.getY() < -50) {
+                if (b.getY() < -50) { //ce leti iz vidnega polja
                     frame.getContentPane().remove(b);
                     bulletsToRemove.add(b);
                     continue;
@@ -277,7 +287,7 @@ public class GameManager {
             bullets.removeAll(bulletsToRemove);
 
             for (Rock r : rocks) {
-                r.move();
+                r.move(); //premik navzdol
 
                 if (r.getY() > frame.getContentPane().getHeight()) {
                     frame.getContentPane().remove(r);
@@ -294,7 +304,6 @@ public class GameManager {
                     rocksToRemove.add(r);
 
                     if (lives <= 0) {
-                        System.out.println("GAME OVER 💀");
                         endGame();
                     }
                 }
@@ -343,10 +352,10 @@ public class GameManager {
             levelTimer.stop();
         }
 
-        // SHRANI REZULTAT TRENUTNE RAVNI
+        // Shranimo rezultate
         SaveManager.saveResult(LevelManager.getCurrentLevel(), score);
 
-        // 2 second delay before showing results
+        // 2 sekundi delay
         Timer delayTimer = new Timer(2000, e -> {
             new Scoreboard(score).setVisible(true);
             frame.dispose();

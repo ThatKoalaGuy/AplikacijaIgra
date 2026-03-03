@@ -21,10 +21,10 @@ public class Scoreboard extends javax.swing.JFrame {
         jTextArea1.setEditable(false);
         jLabel1.setText("Tvoj rezultat: " + score);
 
-        // SHRANI REZULTAT TRENUTNE RAVNI
+        // shranimo trenutni level
         SaveManager.saveResult(LevelManager.getCurrentLevel(), score);
 
-        // PRIKAŽI LESTVICO
+        // leaderboard
         java.util.List<SaveManager.Result> results = SaveManager.getAllResultsSorted();
         StringBuilder lestvica = new StringBuilder();
         for (int i = 0; i < Math.min(10, results.size()); i++) {

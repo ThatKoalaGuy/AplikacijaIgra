@@ -25,7 +25,7 @@ public class SaveManager {
         }
     }
 
-    // SHRANI nov rezultat
+    // sharni nov rezultat
     public static void saveResult(int level, int score) {
         String date = java.time.LocalDateTime.now().format(
                 java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));

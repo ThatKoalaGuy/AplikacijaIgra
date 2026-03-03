@@ -10,12 +10,10 @@ package com.domenkoder.aplikacijaigra;
  */
 public class Level3 extends javax.swing.JFrame {
 
-    private final GameManager gameManager;
-
     public Level3() {
         initComponents();
 
-        gameManager = new GameManager(
+        new GameManager(
                 this, (FadingLabel) spaceshipLabel,
                 bgLabel,
                 jLabelHeart1,
@@ -25,10 +23,6 @@ public class Level3 extends javax.swing.JFrame {
                 jLabel4,
                 750
         );
-
-        /*getContentPane().setComponentZOrder(bgLabel, getContentPane().getComponentCount() - 1);
-        getContentPane().revalidate();
-        getContentPane().repaint();*/
     }
 
     /**

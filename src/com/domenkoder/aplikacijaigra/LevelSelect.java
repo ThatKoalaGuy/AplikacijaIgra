@@ -4,6 +4,8 @@
  */
 package com.domenkoder.aplikacijaigra;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author domen
@@ -33,6 +35,9 @@ public class LevelSelect extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         welcomeTitleLabel = new javax.swing.JLabel();
         levelSelectBgLabel = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Space Ranger | Level select");
@@ -74,35 +79,71 @@ public class LevelSelect extends javax.swing.JFrame {
         levelSelectBgLabel.setText("jLabel1");
         getContentPane().add(levelSelectBgLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, -1));
 
+        jMenu1.setText("Help");
+        jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu1MouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("About");
+        jMenu2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu2MouseClicked(evt);
+            }
+        });
+        jMenu2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu2ActionPerformed(evt);
+            }
+        });
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         setSize(new java.awt.Dimension(1216, 809));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Level1 level1 = new Level1(); // ustvari objekt
-        level1.setVisible(true);      // pokaži okno
-        level1.requestFocusInWindow(); // zdaj deluje
+        Level1 level1 = new Level1();
+        level1.setVisible(true);
+        level1.requestFocusInWindow();
         LevelManager.setLevel(1);
-        this.dispose();               // zapri LevelSelect
+        this.dispose();
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Level2 level2 = new Level2(); // ustvari objekt
-        level2.setVisible(true);      // pokaži okno
-        level2.requestFocusInWindow(); // zdaj deluje
+        Level2 level2 = new Level2(); 
+        level2.setVisible(true);     
+        level2.requestFocusInWindow(); 
         LevelManager.setLevel(2);
-        this.dispose();               // zapri LevelSelect
+        this.dispose();         
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Level3 level3 = new Level3(); // ustvari objekt
-        level3.setVisible(true);      // pokaži okno
-        level3.requestFocusInWindow(); // zdaj deluje
+        Level3 level3 = new Level3(); 
+        level3.setVisible(true);     
+        level3.requestFocusInWindow(); 
         LevelManager.setLevel(3);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(rootPane, "Use arrow keys to move left and right. Press space to shoot.\nPress the up arrow to activate the special ability.", "Instructions", 1);
+    }//GEN-LAST:event_jMenu1MouseClicked
+
+    private void jMenu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu2MouseClicked
+        JOptionPane.showMessageDialog(rootPane, "Space Ranger v1.0 \n © Domen Koder, 2026 \nLicensed under the MIT license.", "About", 1);
+    }//GEN-LAST:event_jMenu2MouseClicked
+
+    private void jMenu2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu2ActionPerformed
+
+    }//GEN-LAST:event_jMenu2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -133,6 +174,9 @@ public class LevelSelect extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JLabel levelSelectBgLabel;
     private javax.swing.JLabel welcomeTitleLabel;
     // End of variables declaration//GEN-END:variables

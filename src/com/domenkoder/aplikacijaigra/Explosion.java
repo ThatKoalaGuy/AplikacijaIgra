@@ -12,10 +12,11 @@ import javax.swing.JLabel;
  * @author domen
  */
 public class Explosion extends JLabel {
+    //Vzame lokacijo
     public Explosion(int x, int y) {
         setIcon(new ImageIcon(getClass().getResource(
                 "/com/domenkoder/aplikacijaigra/images/explosion.gif")));
-
+        //Nastavimo lokacijo in velikost
         setBounds(x, y, 110, 110);
     }
 }

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.domenkoder.aplikacijaigra;
+
 import com.formdev.flatlaf.FlatDarkLaf;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -13,7 +14,7 @@ import javax.swing.UnsupportedLookAndFeelException;
  * @author domen
  */
 public class Welcome extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Welcome.class.getName());
 
     /**
@@ -103,7 +104,7 @@ public class Welcome extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jMenu2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu2ActionPerformed
-        
+
     }//GEN-LAST:event_jMenu2ActionPerformed
 
     private void jMenu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu2MouseClicked

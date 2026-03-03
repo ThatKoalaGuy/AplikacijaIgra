@@ -13,6 +13,7 @@ public class Level1 extends javax.swing.JFrame {
     private final GameManager gameManager;
 
     public Level1() {
+        LevelManager.reset();
         initComponents();
 
         gameManager = new GameManager(

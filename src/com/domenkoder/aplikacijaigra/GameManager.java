@@ -64,19 +64,22 @@ public class GameManager {
 
         setupUI();
         updateHearts();
-        setupInputBindings();
         setupSpawnTimer();
         setupMoveTimer();
         startLevelTimer();
 
+        // KEYS NA KONCU - po vseh timerjih!
+        setupInputBindings();
+
         spaceshipLabel.setLocation(playerX, playerY);
+        frame.requestFocus();  // Focus na koncu
     }
 
     private void setupUI() {
+        // SAMO z-order ozadja - brez focus problema!
         frame.getContentPane().setComponentZOrder(bgLabel,
                 frame.getContentPane().getComponentCount() - 1);
-        frame.setFocusable(true);
-        frame.requestFocusInWindow();
+        // IZBRIŠČENO: frame.setFocusable(true); frame.requestFocusInWindow();
     }
 
     private void updateHearts() {
@@ -165,11 +168,13 @@ public class GameManager {
     }
 
     private void spawnExplosion(int x, int y) {
+        System.out.println("💥 EXPLOSION na (" + x + "," + y + ")");  // DEBUG
         Explosion explosion = new Explosion(x, y);
         frame.getContentPane().add(explosion);
         frame.getContentPane().setComponentZOrder(explosion, 0);
 
         Timer removeTimer = new Timer(600, e -> {
+            System.out.println("🧹 EXPLOSION odstranjen");  // DEBUG
             frame.getContentPane().remove(explosion);
             frame.getContentPane().repaint();
         });
@@ -193,13 +198,14 @@ public class GameManager {
                             randomX, -80, rockWidth, rockWidth));
             frame.getContentPane().setComponentZOrder(r, 0);
         });
-
         spawnTimer.start();
     }
 
     private void setupMoveTimer() {
         moveTimer = new Timer(16, (ActionEvent e) -> {
-
+            if (gameOver) {
+                return;  // Early exit če je konec
+            }
             if (leftPressed) {
                 movePlayer(-8);
             }
@@ -229,15 +235,11 @@ public class GameManager {
 
                 for (Rock r : rocks) {
                     if (b.getBounds().intersects(r.getBounds())) {
-
                         spawnExplosion(r.getX(), r.getY());
-
                         frame.getContentPane().remove(b);
                         frame.getContentPane().remove(r);
-
                         bulletsToRemove.add(b);
                         rocksToRemove.add(r);
-
                         score++;
                         jLabel4.setText("Score: " + score);
                         break;
@@ -256,14 +258,11 @@ public class GameManager {
                     continue;
                 }
 
-                if (!gameOver
-                        && r.getBounds().intersects(spaceshipLabel.getBounds())) {
-
+                if (!gameOver && r.getBounds().intersects(spaceshipLabel.getBounds())) {
                     spawnExplosion(r.getX(), r.getY());
-
+                    spaceshipLabel.startFlash();  // ✅ ADD THIS LINE
                     lives--;
                     updateHearts();
-
                     frame.getContentPane().remove(r);
                     rocksToRemove.add(r);
 
@@ -277,7 +276,6 @@ public class GameManager {
             rocks.removeAll(rocksToRemove);
             frame.getContentPane().repaint();
         });
-
         moveTimer.start();
     }
 
@@ -286,7 +284,6 @@ public class GameManager {
         jLabel3.setText("Time: " + levelSeconds);
 
         levelTimer = new Timer(1000, e -> {
-
             if (gameOver) {
                 levelTimer.stop();
                 return;
@@ -294,7 +291,6 @@ public class GameManager {
 
             int currentTime = Integer.parseInt(
                     jLabel3.getText().replace("Time: ", ""));
-
             currentTime--;
 
             if (currentTime <= 0) {
@@ -305,7 +301,6 @@ public class GameManager {
                 jLabel3.setText("Time: " + currentTime);
             }
         });
-
         levelTimer.start();
     }
 
@@ -321,11 +316,15 @@ public class GameManager {
             levelTimer.stop();
         }
 
-        // SHRANI REZULTAT
-        SaveManager.saveResult(1, score);  // raven 1, 2 ali 3
+        // SHRANI REZULTAT TRENUTNE RAVNI
+        SaveManager.saveResult(LevelManager.getCurrentLevel(), score);
 
-        new Scoreboard(score).setVisible(true);
-        frame.dispose();
+        // 2 second delay before showing results
+        Timer delayTimer = new Timer(2000, e -> {
+            new Scoreboard(score).setVisible(true);
+            frame.dispose();
+        });
+        delayTimer.setRepeats(false);
+        delayTimer.start();
     }
-
 }

@@ -11,7 +11,8 @@ import javax.swing.JLabel;
  *
  * @author domen
  */
-public class Rock extends JLabel{
+public class Rock extends JLabel {
+
     int speed = 2;
 
     public Rock(int x) {

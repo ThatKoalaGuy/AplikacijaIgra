@@ -50,7 +50,7 @@ public class Level3 extends javax.swing.JFrame {
         bgLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Space Ranger | Level 1");
+        setTitle("Space Ranger | Level 3");
         getContentPane().setLayout(null);
 
         spaceshipLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/ezgif-31ef2d2cde44eff7.gif"))); // NOI18N

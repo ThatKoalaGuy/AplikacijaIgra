@@ -9,31 +9,31 @@ package com.domenkoder.aplikacijaigra;
  * @author domen
  */
 public class Scoreboard extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Scoreboard.class.getName());
 
     /**
      * Creates new form Scoreboard
-     * @param score
      */
     public Scoreboard(int score) {
-    initComponents();
-    jLabel1.setText("Tvoj rezultat: " + score);
-    
-    // PRIKAŽI VSE REZULTATE - RAZVRSCENE
-    java.util.List<SaveManager.Result> results = SaveManager.getAllResultsSorted();
-    
-    StringBuilder lestvica = new StringBuilder("LESTVICA REZULTATOV:\n");
-    for (int i = 0; i < Math.min(10, results.size()); i++) {
-        SaveManager.Result r = results.get(i);
-        lestvica.append(String.format("%d. Raven %d: %d (%s)\n", 
-            i+1, r.level, r.score, r.date));
-    }
-    
-    // Dodaj jLabel2 ali jTextArea1 v designer
-    jTextArea1.setText(lestvica.toString());  // ali jTextArea1.setText()
-}
+        initComponents();
 
+        jTextArea1.setEditable(false);
+        jLabel1.setText("Tvoj rezultat: " + score);
+
+        // SHRANI REZULTAT TRENUTNE RAVNI
+        SaveManager.saveResult(LevelManager.getCurrentLevel(), score);
+
+        // PRIKAŽI LESTVICO
+        java.util.List<SaveManager.Result> results = SaveManager.getAllResultsSorted();
+        StringBuilder lestvica = new StringBuilder();
+        for (int i = 0; i < Math.min(10, results.size()); i++) {
+            SaveManager.Result r = results.get(i);
+            lestvica.append(String.format("%d. Raven %d: %d (%s)\n",
+                    i + 1, r.level, r.score, r.date));
+        }
+        jTextArea1.setText(lestvica.toString());
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -48,31 +48,59 @@ public class Scoreboard extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Space Ranger | Scoreboard");
         getContentPane().setLayout(null);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
-        jLabel1.setText("jLabel1");
+        jLabel1.setFont(new java.awt.Font("C&C Red Alert [INET]", 1, 70)); // NOI18N
+        jLabel1.setText("SCOREBOARD");
         getContentPane().add(jLabel1);
-        jLabel1.setBounds(250, 10, 410, 190);
+        jLabel1.setBounds(10, 30, 780, 80);
 
         jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jTextArea1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
         getContentPane().add(jScrollPane1);
-        jScrollPane1.setBounds(30, 170, 740, 300);
+        jScrollPane1.setBounds(11, 146, 780, 320);
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jButton1.setFont(new java.awt.Font("C&C Red Alert [INET]", 1, 48)); // NOI18N
         jButton1.setText("NADALJUJ");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton1);
-        jButton1.setBounds(480, 510, 280, 50);
+        jButton1.setBounds(570, 480, 220, 80);
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/domenkoder/aplikacijaigra/images/Space-Background-Image-2-1024x682.jpg"))); // NOI18N
+        getContentPane().add(jLabel2);
+        jLabel2.setBounds(-3, -4, 810, 610);
 
         setSize(new java.awt.Dimension(816, 609));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+
+        if (LevelManager.getCurrentLevel() < LevelManager.TOTAL_LEVELS) {
+            LevelManager.nextLevel();
+            if (LevelManager.getCurrentLevel() == 2) {
+                new Level2().setVisible(true);
+            } else if (LevelManager.getCurrentLevel() == 3) {
+                new Level3().setVisible(true);
+            }
+        } else {
+            LevelManager.reset();
+            new Welcome().setVisible(true);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -95,14 +123,15 @@ public class Scoreboard extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
         int score = 1000;
+        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new Scoreboard(score).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables

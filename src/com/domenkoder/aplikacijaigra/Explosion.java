@@ -11,7 +11,8 @@ import javax.swing.JLabel;
  *
  * @author domen
  */
-public class Explosion extends JLabel{
+public class Explosion extends JLabel {
+
     public Explosion(int x, int y) {
         setIcon(new ImageIcon(getClass().getResource(
                 "/com/domenkoder/aplikacijaigra/images/explosion.gif")));

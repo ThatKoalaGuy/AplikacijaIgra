@@ -11,10 +11,11 @@ import javax.swing.JLabel;
  *
  * @author domen
  */
-public class Bullet extends JLabel{
+public class Bullet extends JLabel {
+
     public Bullet(int x, int y) {
         setIcon(new ImageIcon(
-            getClass().getResource("/com/domenkoder/aplikacijaigra/images/bullet.gif")
+                getClass().getResource("/com/domenkoder/aplikacijaigra/images/bullet.gif")
         ));
         setBounds(x, y, 20, 40);
     }

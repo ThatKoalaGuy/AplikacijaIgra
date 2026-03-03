@@ -9,7 +9,7 @@ package com.domenkoder.aplikacijaigra;
  * @author domen
  */
 public class LevelSelect extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LevelSelect.class.getName());
 
     /**
@@ -98,7 +98,7 @@ public class LevelSelect extends javax.swing.JFrame {
         Level3 level3 = new Level3(); // ustvari objekt
         level3.setVisible(true);      // pokaži okno
         level3.requestFocusInWindow(); // zdaj deluje
-        this.dispose(); 
+        this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

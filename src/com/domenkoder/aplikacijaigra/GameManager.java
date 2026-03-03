@@ -39,6 +39,9 @@ public class GameManager {
 
     private int score = 0;
 
+    private boolean isInvincible = false;
+    private boolean rollCooldown = false;
+
     public GameManager(JFrame frame,
             FadingLabel spaceshipLabel,
             JLabel bgLabel,
@@ -79,7 +82,6 @@ public class GameManager {
         // SAMO z-order ozadja - brez focus problema!
         frame.getContentPane().setComponentZOrder(bgLabel,
                 frame.getContentPane().getComponentCount() - 1);
-        // IZBRIŠČENO: frame.setFocusable(true); frame.requestFocusInWindow();
     }
 
     private void updateHearts() {
@@ -129,6 +131,31 @@ public class GameManager {
         am.put("spaceReleased", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 spacePressed = false;
+            }
+        });
+
+        // BARREL ROLL - UP arrow
+        im.put(KeyStroke.getKeyStroke("pressed UP"), "upPressed");
+        am.put("upPressed", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (!isInvincible && !rollCooldown) {
+                    isInvincible = true;
+                    rollCooldown = true;
+                    spaceshipLabel.setAlpha(0.5f);
+
+                    Timer invTimer = new Timer(4000, ev -> {  // 3 seconds
+                        isInvincible = false;
+                        spaceshipLabel.setAlpha(1.0f);
+                    });
+                    invTimer.setRepeats(false);
+                    invTimer.start();
+
+                    Timer cdTimer = new Timer(8000, ev -> {  // 8 seconds
+                        rollCooldown = false;
+                    });
+                    cdTimer.setRepeats(false);
+                    cdTimer.start();
+                }
             }
         });
     }
@@ -258,9 +285,9 @@ public class GameManager {
                     continue;
                 }
 
-                if (!gameOver && r.getBounds().intersects(spaceshipLabel.getBounds())) {
+                if (!gameOver && !isInvincible && r.getBounds().intersects(spaceshipLabel.getBounds())) {
                     spawnExplosion(r.getX(), r.getY());
-                    spaceshipLabel.startFlash();  // ✅ ADD THIS LINE
+                    spaceshipLabel.startFlash();
                     lives--;
                     updateHearts();
                     frame.getContentPane().remove(r);

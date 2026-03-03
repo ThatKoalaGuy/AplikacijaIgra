@@ -16,30 +16,25 @@ public class FadingLabel extends JLabel {
         repaint();
     }
 
-    /**
-     * Flashes the label by toggling alpha between 1.0 and 0.2 Creates a visible
-     * "hit" effect when the ship is damaged.
-     */
     public void startFlash() {
-        // Stop any existing flash animation
         if (flashTimer != null && flashTimer.isRunning()) {
             flashTimer.stop();
         }
 
         final int[] count = {0};
-        final int maxFlashes = 6; // 3 full blink cycles (dim → bright × 3)
+        final int maxFlashes = 6;
 
         flashTimer = new Timer(80, e -> {
             count[0]++;
             if (count[0] % 2 == 1) {
-                setAlpha(0.2f);  // dim
+                setAlpha(0.2f);
             } else {
-                setAlpha(1.0f);  // bright
+                setAlpha(1.0f);
             }
 
             if (count[0] >= maxFlashes) {
                 flashTimer.stop();
-                setAlpha(1.0f);  // ensure fully visible at the end
+                setAlpha(1.0f);
             }
         });
 

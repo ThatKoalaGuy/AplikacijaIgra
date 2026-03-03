@@ -8,11 +8,11 @@ package com.domenkoder.aplikacijaigra;
  *
  * @author domen
  */
-public class Level1 extends javax.swing.JFrame {
+public class Level2 extends javax.swing.JFrame {
 
     private final GameManager gameManager;
 
-    public Level1() {
+    public Level2() {
         initComponents();
 
         gameManager = new GameManager(
@@ -23,7 +23,7 @@ public class Level1 extends javax.swing.JFrame {
                 jLabelHeart3,
                 jLabel3,
                 jLabel4,
-                1500 //spawn interval za Level 1
+                1000
         );
 
         /*getContentPane().setComponentZOrder(bgLabel, getContentPane().getComponentCount() - 1);
@@ -116,7 +116,7 @@ public class Level1 extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Level1().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new Level2().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

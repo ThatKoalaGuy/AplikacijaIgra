@@ -30,7 +30,6 @@ public class GameManager {
 
     private final int spawnInterval;
 
-    // tipke stanja
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     private boolean spacePressed = false;
@@ -56,8 +55,8 @@ public class GameManager {
         this.jLabelHeart1 = heart1;
         this.jLabelHeart2 = heart2;
         this.jLabelHeart3 = heart3;
-        this.jLabel3 = levelLabel;  // timer
-        this.jLabel4 = scoreLabel;  // score
+        this.jLabel3 = levelLabel;
+        this.jLabel4 = scoreLabel;
         this.spawnInterval = spawnInterval;
 
         score = 0;
@@ -74,7 +73,8 @@ public class GameManager {
     }
 
     private void setupUI() {
-        frame.getContentPane().setComponentZOrder(bgLabel, frame.getContentPane().getComponentCount() - 1);
+        frame.getContentPane().setComponentZOrder(bgLabel,
+                frame.getContentPane().getComponentCount() - 1);
         frame.setFocusable(true);
         frame.requestFocusInWindow();
     }
@@ -140,7 +140,9 @@ public class GameManager {
     }
 
     private void syncShipPosition() {
-        spaceshipLabel.setBounds(playerX, playerY, spaceshipLabel.getWidth(), spaceshipLabel.getHeight());
+        spaceshipLabel.setBounds(playerX, playerY,
+                spaceshipLabel.getWidth(),
+                spaceshipLabel.getHeight());
     }
 
     private void movePlayer(int deltaX) {
@@ -156,7 +158,9 @@ public class GameManager {
         Bullet b = new Bullet(bulletX, bulletY);
         bullets.add(b);
 
-        frame.getContentPane().add(b, new org.netbeans.lib.awtextra.AbsoluteConstraints(bulletX, bulletY, 20, 40));
+        frame.getContentPane().add(b,
+                new org.netbeans.lib.awtextra.AbsoluteConstraints(
+                        bulletX, bulletY, 20, 40));
         frame.getContentPane().setComponentZOrder(b, 0);
     }
 
@@ -178,19 +182,24 @@ public class GameManager {
             int screenWidth = frame.getContentPane().getWidth();
             int margin = 70;
             int rockWidth = 80;
+
             int randomX = margin + (int) (Math.random() * (screenWidth - 2 * margin - rockWidth));
 
             Rock r = new Rock(randomX);
             rocks.add(r);
 
-            frame.getContentPane().add(r, new org.netbeans.lib.awtextra.AbsoluteConstraints(randomX, -80, rockWidth, rockWidth));
+            frame.getContentPane().add(r,
+                    new org.netbeans.lib.awtextra.AbsoluteConstraints(
+                            randomX, -80, rockWidth, rockWidth));
             frame.getContentPane().setComponentZOrder(r, 0);
         });
+
         spawnTimer.start();
     }
 
     private void setupMoveTimer() {
-        moveTimer = new Timer(16, e -> {
+        moveTimer = new Timer(16, (ActionEvent e) -> {
+
             if (leftPressed) {
                 movePlayer(-8);
             }
@@ -211,65 +220,56 @@ public class GameManager {
 
             for (Bullet b : bullets) {
                 b.move();
+
                 if (b.getY() < -50) {
                     frame.getContentPane().remove(b);
                     bulletsToRemove.add(b);
                     continue;
                 }
+
                 for (Rock r : rocks) {
                     if (b.getBounds().intersects(r.getBounds())) {
-                                                spawnExplosion(r.getX(), r.getY());
+
+                        spawnExplosion(r.getX(), r.getY());
 
                         frame.getContentPane().remove(b);
                         frame.getContentPane().remove(r);
+
                         bulletsToRemove.add(b);
                         rocksToRemove.add(r);
 
-                        // Povečaj score
                         score++;
                         jLabel4.setText("Score: " + score);
                         break;
                     }
                 }
             }
+
             bullets.removeAll(bulletsToRemove);
 
             for (Rock r : rocks) {
                 r.move();
+
                 if (r.getY() > frame.getContentPane().getHeight()) {
                     frame.getContentPane().remove(r);
                     rocksToRemove.add(r);
                     continue;
                 }
 
-                if (!gameOver && r.getBounds().intersects(spaceshipLabel.getBounds())) {
+                if (!gameOver
+                        && r.getBounds().intersects(spaceshipLabel.getBounds())) {
+
                     spawnExplosion(r.getX(), r.getY());
+
                     lives--;
                     updateHearts();
+
                     frame.getContentPane().remove(r);
                     rocksToRemove.add(r);
 
-                    Timer flashTimer = new Timer(100, null);
-                    final int[] count = {0};
-                    flashTimer.addActionListener(ev -> {
-                        float newAlpha = (count[0] % 2 == 0) ? 0f : 1f;
-                        spaceshipLabel.setAlpha(newAlpha);
-                        count[0]++;
-                        if (count[0] >= 6) {
-                            spaceshipLabel.setAlpha(1f);
-                            flashTimer.stop();
-                        }
-                    });
-                    flashTimer.start();
-
                     if (lives <= 0) {
-                        gameOver = true;
-                        spawnTimer.stop();
-                        moveTimer.stop();
-                        if (levelTimer != null) {
-                            levelTimer.stop();
-                        }
                         System.out.println("GAME OVER 💀");
+                        endGame();
                     }
                 }
             }
@@ -277,6 +277,7 @@ public class GameManager {
             rocks.removeAll(rocksToRemove);
             frame.getContentPane().repaint();
         });
+
         moveTimer.start();
     }
 
@@ -285,21 +286,21 @@ public class GameManager {
         jLabel3.setText("Time: " + levelSeconds);
 
         levelTimer = new Timer(1000, e -> {
+
             if (gameOver) {
                 levelTimer.stop();
                 return;
             }
 
-            int currentTime = Integer.parseInt(jLabel3.getText().replace("Time: ", ""));
+            int currentTime = Integer.parseInt(
+                    jLabel3.getText().replace("Time: ", ""));
+
             currentTime--;
 
             if (currentTime <= 0) {
-                spawnTimer.stop();
-                moveTimer.stop();
-                gameOver = true;
-                levelTimer.stop();
                 jLabel3.setText("Time: 0");
                 System.out.println("LEVEL COMPLETE 🎉");
+                endGame();
             } else {
                 jLabel3.setText("Time: " + currentTime);
             }
@@ -307,4 +308,24 @@ public class GameManager {
 
         levelTimer.start();
     }
+
+    private void endGame() {
+        if (gameOver) {
+            return;
+        }
+        gameOver = true;
+
+        spawnTimer.stop();
+        moveTimer.stop();
+        if (levelTimer != null) {
+            levelTimer.stop();
+        }
+
+        // SHRANI REZULTAT
+        SaveManager.saveResult(1, score);  // raven 1, 2 ali 3
+
+        new Scoreboard(score).setVisible(true);
+        frame.dispose();
+    }
+
 }

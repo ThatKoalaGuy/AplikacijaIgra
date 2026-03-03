@@ -122,9 +122,6 @@ public class Welcome extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new Welcome().setVisible(true));
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Welcome().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

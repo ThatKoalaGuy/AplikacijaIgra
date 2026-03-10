@@ -116,18 +116,18 @@ public class LevelSelect extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Level2 level2 = new Level2(); 
-        level2.setVisible(true);     
-        level2.requestFocusInWindow(); 
+        Level2 level2 = new Level2();
+        level2.setVisible(true);
+        level2.requestFocusInWindow();
         LevelManager.setLevel(2);
-        this.dispose();         
+        this.dispose();
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Level3 level3 = new Level3(); 
-        level3.setVisible(true);     
-        level3.requestFocusInWindow(); 
+        Level3 level3 = new Level3();
+        level3.setVisible(true);
+        level3.requestFocusInWindow();
         LevelManager.setLevel(3);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed

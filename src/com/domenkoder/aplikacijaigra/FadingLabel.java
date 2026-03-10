@@ -27,7 +27,7 @@ public class FadingLabel extends JLabel {
         //Stevec utripanja
         final int[] count = {0};
         final int maxFlashes = 6;
-        
+
         //na 80ms se prosojnost zamenja
         flashTimer = new Timer(80, e -> {
             count[0]++;

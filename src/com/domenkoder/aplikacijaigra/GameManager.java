@@ -41,6 +41,7 @@ public class GameManager {
     private final int shootCooldownMax = 24;
 
     private int score = 0;
+    public static int currentLevel = 1;
 
     //Neunicljivost
     private boolean isInvincible = false;
@@ -84,7 +85,7 @@ public class GameManager {
 
     private void setupUI() {
         frame.getContentPane().setComponentZOrder(bgLabel,
-            frame.getContentPane().getComponentCount() - 1);
+                frame.getContentPane().getComponentCount() - 1);
     }
 
     private void updateHearts() {
@@ -187,7 +188,6 @@ public class GameManager {
         syncShipPosition();
     }
 
-    
     private void shootBullet() {
         //Start lokacija metka
         int bulletX = playerX + spaceshipLabel.getWidth() / 2 - 10;
@@ -289,7 +289,12 @@ public class GameManager {
             for (Rock r : rocks) {
                 r.move(); //premik navzdol
 
-                if (r.getY() > frame.getContentPane().getHeight()) {
+                if (r.getY() > frame.getContentPane().getHeight()) {  // Če gre pod okno
+                    if (GameManager.currentLevel >= 3) {  
+                        score = Math.max(0, score - 5);   // -5 pik
+                        jLabel4.setText("Score: " + score);
+                    }
+
                     frame.getContentPane().remove(r);
                     rocksToRemove.add(r);
                     continue;

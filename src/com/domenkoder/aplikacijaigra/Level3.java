@@ -11,6 +11,7 @@ package com.domenkoder.aplikacijaigra;
 public class Level3 extends javax.swing.JFrame {
 
     public Level3() {
+        GameManager.currentLevel = 3;
         initComponents();
 
         new GameManager(
